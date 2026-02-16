@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Cuestionario tipo flashcards</title>
+  <script type="text/javascript" src="lib/descartes-min.js" charset="utf-8"></script>
+</head>
+
+<body style="padding:0; margin:0; background:#eff0f1;">
+
+  <div align="center">
+    <ajs name="Descartes" code="Descartes" width="1000" height="720">
+      <param name="tamaño" value="1000x720">
+      <param name="decimal_symbol" value=".">
+      <param name="expand" value="fit">
+      <param name="nombre" value="">
+      <param name="Versión" value="5.5">
+      <param name="editable" value="no">
+      <param name="Idioma" value="español">
+      <param name="Botones" value="créditos=no config=no inicio=no limpiar=no filas_norte=0 filas_sur=0 ancho_este=150 ancho_oeste=150 alto=40 ">
+      <param name="E_01" value="tipo='R2' id='E1' ancho='100%' alto='100%' red='no' red10='no' ejes='no' sensible_a_los_movimientos_del_ratón='sí' border_width='5' border_color='4f1595' border_radius='15' ">
+      <param name="E_02" value="tipo='R2' id='Usuario' x='5' y='600' ancho='470' alto='100' fondo='ff4f1595' red='no' red10='no' ejes='no' border_width='5' border_color='6825df' border_radius='15' ">
+      <param name="E_03" value="tipo='R2' id='title' ancho='100%' alto='70' fondo='7535e2' red='no' red10='no' ejes='no' border_width='5' border_color='592be2' border_radius='15' ">
+      <param name="E_04" value="tipo='R2' id='bot1' x='10' y='140' ancho='48%' alto='61%' dibujar-si='muestra=1' fondo='ffffffff' red='no' red10='no' ejes='no' border_width='5' border_color='592be2' border_radius='15' ">
+      <param name="E_05" value="tipo='R2' id='bot2' x='51%' y='140' ancho='48%' alto='65%' dibujar-si='muestra=1111' fondo='ffffffff' red='no' red10='no' ejes='no' border_width='5' border_color='592be2' border_radius='15' ">
+      <param name="E_06" value="tipo='HTMLIFrame' id='HISTORIAL' x='14' y='145' ancho='460' alto='420' dibujar-si='(muestra=1)&(historia=1)' archivo='historial.html' ">
+      <param name="E_07" value="tipo='HTMLIFrame' id='HISTORIAL2' x='520' y='145' ancho='460' alto='455' dibujar-si='(muestra=1)&(historia=1)' archivo='historial2.html' ">
+      <param name="E_08" value="tipo='HTMLIFrame' id='E8' x='25%' y='40%' ancho='50%' alto='30%' dibujar-si='corre=0' archivo='api.html' ">
+      <param name="C_01" value="id='prompt' tipo='texto' espacio='Usuario' expresión='(7,10,455,80)' fuente puntos='20' texto='Escribe el tema del cuestionario' activo-si='(muestra=0)&(corre=1)' ">
+      <param name="C_02" value="id='Enviar' interfaz='botón' tipo='numérico' región='interior' espacio='E1' nombre='Enviar' expresión='(490,610,80,30)' color='ffffff' color-int='6925e2' negrita='sí' fuente puntos='20' acción='calcular' parámetro='sistema=_Load_(TONO[instru]);genera()' activo-si='(muestra=0)&(corre=1)' extra_style='overColor=0020ff|borderRadius=15' ">
+      <param name="C_03" value="id='Nuevo chat' interfaz='botón' tipo='numérico' región='interior' espacio='E1' expresión='(530,654,40,40)' color='ffffff' color-int='ff6925e2' negrita='sí' fuente puntos='20' imagen='nuevo.png' acción='calcular' parámetro='prompt=&squot;&squot;;muestra=0;content=&squot;&squot;;file=&squot;&squot;;cambio=0;historial=&squot;&squot;;hit=&squot;&squot;;historia=0;corre=1;;historial2=_Load_(&squot;inicio_archivo.txt&squot;);historial2=replace(historial2,&squot;script_cerrar&squot;,&squot;script&squot;)' info='Nuevo chat' ">
+      <param name="C_04" value="id='llm1' tipo='numérico' interfaz='menú' región='interior' espacio='E1' expresión='(40,106,180,35)' visible='no' opciones='GPT-5 Mini, Grok 4, Gemini 3 Flash, Claude Sonnet 4.5, Gemini 3 Pro' dibujar-si='1' label_color='6925e2' label_text_color='ffffff' ">
+      <param name="C_05" value="id='instru' tipo='numérico' interfaz='menú' región='interior' espacio='E1' nombre='Tono' expresión='((1000-220)/2,72,220,40)' visible='no' opciones='Académico,Sarcástico,Feliz,Enojado,Snob,Detective,Filósofo,Analfabeta,Poeta,Mago,Loco' dibujar-si='pp' label_color='6925e2' label_text_color='ffffff' fuente puntos='22' ">
+      <param name="C_06" value="id='historial1' interfaz='botón' tipo='numérico' región='interior' espacio='E1' nombre='Descarga cuestionario HTML' expresión='(225,105,250,32)' color='ffffff' color-int='6925e2' fuente puntos='18' acción='calcular' parámetro='historia=1;_Save_(&squot;historial2.html&squot;,historial2)' dibujar-si='muestra=1' extra_style='overColor=0000ff|borderRadius=15' ">
+      <param name="C_07" value="id='historial2' interfaz='botón' tipo='numérico' región='interior' espacio='E1' nombre='Descarga chat en formato TXT' expresión='(560,72,330,32)' color='ffffff' color-int='6925e2' fuente puntos='18' acción='calcular' parámetro='historia=1;_Save_(&squot;Arch.txt&squot;,hit)' dibujar-si='muestra=111' extra_style='overColor=0000ff|borderRadius=15' ">
+      <param name="C_08" value="id='hit' tipo='texto' espacio='E1' expresión='(10,111,510,495)' font_family='Monospaced' fuente puntos='12' dibujar-si='0' info='(muestra=1)&(historia=1)' ">
+      <param name="C_09" value="id='Borra' interfaz='botón' tipo='numérico' región='interior' espacio='E1' expresión='(481,654,35,35)' color='ffffff' color-int='ff6925e2' negrita='sí' fuente puntos='20' imagen='papelera2.png' acción='calcular' parámetro='prompt=&squot;&squot;;' info='Borra prompt' ">
+      <param name="C_10" value="id='historial3' interfaz='botón' tipo='numérico' región='interior' espacio='E1' nombre='Historial' expresión='(420,72,100,32)' color='ffffff' color-int='6925e2' fuente puntos='18' acción='calcular' parámetro='historia=1' dibujar-si='historia=110' extra_style='overColor=0000ff|borderRadius=15' ">
+      <param name="C_11" value="id='historial4' interfaz='botón' tipo='numérico' región='interior' espacio='E1' nombre='Gráfico' expresión='(420,72,100,32)' color='ffffff' color-int='6925e2' fuente puntos='18' acción='calcular' parámetro='historia=0' dibujar-si='historia=111' extra_style='overColor=0000ff|borderRadius=15' ">
+      <param name="C_12" value="id='nuevo2' interfaz='botón' tipo='numérico' región='interior' espacio='E1' nombre='Otro cuestionario' expresión='(640,640,250,32)' color='ffffff' color-int='6925e2' fuente puntos='18' acción='calcular' parámetro='muestra=0;content=&squot;&squot;;file=&squot;&squot;;cambio=0;historial=&squot;&squot;;hit=&squot;&squot;;historia=0;corre=1;;historial2=_Load_(&squot;inicio_archivo.txt&squot;);historial2=replace(historial2,&squot;script_cerrar&squot;,&squot;script&squot;);;genera()' dibujar-si='muestra=1' extra_style='overColor=0000ff|borderRadius=15' ">
+      <param name="C_13" value="id='llave' interfaz='botón' tipo='numérico' región='interior' espacio='E1' nombre='🔑' expresión='(590,604,40,40)' color='ffffff' color-int='5e21cb' fuente puntos='26' acción='calcular' parámetro='vAPI=0;corre=0' dibujar-si='muestra=0' ">
+      <param name="A_01" value="id='INICIO' algoritmo='sí' evaluar='una-sola-vez' hacer='sistema=_Load_(TONO[instru]);cuenta=0;historial=&squot;&squot;;historial2=&squot;&squot;;hit=&squot;&squot;;;muestra=0;;historial2=_Load_(&squot;inicio_archivo.txt&squot;);historial2=replace(historial2,&squot;script_cerrar&squot;,&squot;script&squot;);;corre=(API!=0)?1:0;' ">
+      <param name="A_02" value="id='CALCULOS' algoritmo='sí' evaluar='siempre' hacer='API=vAPI;;corre=(API!=0)?1:0' ">
+      <param name="A_03" value="id='e3' evento='sí' condición='muestra=1' acción='animar' ejecución='una-sola-vez' ">
+      <param name="A_04" value="id='MODELO1' vector='sí' evaluar='una-sola-vez' tamaño='3' expresión='MODELO1[0]=&squot;openai&squot;;MODELO1[1]=&squot;grok&squot;;MODELO1[2]=&squot;gemini&squot;;MODELO1[3]=&squot;claude&squot;;MODELO1[4]=&squot;gemini-large&squot;;;;' tipo='vector' ">
+      <param name="A_05" value="id='MODELO2' vector='sí' evaluar='una-sola-vez' tamaño='3' expresión='MODELO2[0]=&squot;openai&squot;;MODELO2[1]=&squot;grok&squot;;MODELO2[2]=&squot;gemini&squot;;MODELO2[3]=&squot;claude&squot;;MODELO2[4]=&squot;gemini-large&squot;;;;' tipo='vector' ">
+      <param name="A_06" value="id='color' vector='sí' evaluar='una-sola-vez' tamaño='9' expresión='color[0]=0;color[1]=&squot;linear-gradient(to bottom, #330033, #663366, #996699)&squot;;color[2]=&squot;linear-gradient(to bottom, #1a237e, #3949ab, #5c6bc0)&squot;;color[3]=&squot;linear-gradient(to bottom, #004d40, #00796b, #009688)&squot;;color[4]=&squot;linear-gradient(to bottom, #311b92, #512da8, #673ab7)&squot;;color[5]=&squot;linear-gradient(to bottom, #880e4f, #c2185b, #e91e63)&squot;;color[6]=&squot;linear-gradient(to bottom, #3e2723, #5d4037, #8d6e63)&squot;;color[7]=&squot;linear-gradient(to bottom, #1b5e20, #2e7d32, #43a047)&squot;;color[8]=&squot;linear-gradient(to bottom, #bf360c, #e64a19, #ff5722)&squot;;color[9]=&squot;linear-gradient(to bottom, #263238, #455a64, #607d8b)&squot;;' tipo='vector' ">
+      <param name="A_07" value="id='genera()' algoritmo='sí' expresión='0' hacer='muestra=1;historia=1;sistema=_Load_(TONO[instru]);IA=ESTILO[instru];cuenta=cuenta+1;color_fondo=random(1,9);color_def=color[color_fondo];;modelo1=MODELO1[llm1];file1=&squot;https://enter.pollinations.ai/api/generate/text/&squot;+prompt+&squot;?key=&squot;+API+&squot;&model=&squot;+modelo1+&squot;&system=&squot;+sistema;content1=_Load_(file1);;str2=&squot;```json&squot;;content1=replace(content1,str2,&squot;&squot;);;str2=&squot;```&squot;;content1=replace(content1,str2,&squot;&squot;);;historial=content1;;;;modelo2=MODELO2[llm1];file2=&squot;https://enter.pollinations.ai/api/generate/text/&squot;+prompt+&squot;?key=&squot;+API+&squot;&model=&squot;+modelo2+&squot;&system=&squot;+sistema;content2=_Load_(file2);;;historial2=replace(historial2,&squot;{question: &quot;¿La Semana Santa siempre comienza el Domingo de Ramos?&quot;,answer: true,justification: &quot;&quot;},{question: &quot;¿El Jueves Santo se conmemora la crucifixión de Jesús?&quot;,answer: false,justification: &quot;El Jueves Santo se conmemora la Última Cena y el lavatorio de pies. La crucifixión se conmemora el Viernes Santo.&quot;},&squot;,historial);historial2=replace(historial2,&squot;linear-gradient(to bottom, #330033,#663366, #996699)&squot;,color_def);;;hit=hit+&squot;\n\nTú\n&squot;+prompt+&squot;\n\n&squot;+IA+&squot;\n&squot;+content+&squot;\n\n&squot;;HISTORIAL.set(&squot;info&squot;,historial);HISTORIAL2.set(&squot;info&squot;,historial2);;' tipo='función' ">
+      <param name="A_08" value="id='TONO' vector='sí' evaluar='una-sola-vez' tamaño='3' expresión='TONO[0]=&squot;instrucciones0.txt&squot;;TONO[1]=&squot;instrucciones1.txt&squot;;TONO[2]=&squot;instrucciones2.txt&squot;;TONO[3]=&squot;instrucciones3.txt&squot;;TONO[4]=&squot;instrucciones4.txt&squot;;TONO[5]=&squot;instrucciones5.txt&squot;;TONO[6]=&squot;instrucciones6.txt&squot;;TONO[7]=&squot;instrucciones7.txt&squot;;TONO[8]=&squot;instrucciones8.txt&squot;;TONO[9]=&squot;instrucciones9.txt&squot;;TONO[10]=&squot;instrucciones10.txt&squot;;' tipo='vector' ">
+      <param name="A_09" value="id='NAME' vector='sí' evaluar='una-sola-vez' tamaño='9' expresión='NAME[0]=&squot;OpenAI GPT-5 Mini&squot;;NAME[1]=&squot;xAI Grok 4&squot;;NAME[2]=&squot;Gemini 3 Flash&squot;;NAME[3]=&squot;Claude 4.5 Sonnet&squot;;NAME[4]=&squot;Gemini 3 Pro&squot;;;;' tipo='vector' ">
+      <param name="A_10" value="id='quitarCaracteres(stTexto)' algoritmo='sí' expresión='auxiliar2' inicio='n=_longitud_(stTexto);nn=indexOf(&quot;{&quot;,stTexto);pasos=n-nn+1;auxiliar2=&squot;&squot;;i=0;' hacer='auxiliar2=auxiliar2+_letraEn_(stTexto,i)' mientras='i<=pasos' tipo='función' ">
+      <param name="G_01" value="espacio='E1' tipo='texto' color='5417bf' dibujar-si='(muestra=1)&(historia=0)' coord_abs='sí' expresión='(20,115)' texto='[content]' ancho='960' align='a_left' anchor='a_top_left' ">
+      <param name="G_02" value="espacio='title' tipo='texto' color='ffffff' coord_abs='sí' expresión='(500,35)' texto='Cuestionarios tipo falso o verdadero, estilo flashcards' ancho='1000' negrita='sí' fuente puntos='32' align='a_center' anchor='a_center_center' ">
+      <param name="G_03" value="espacio='title' tipo='imagen' coord_abs='no' expresión='(-9.6,0,1.2,1.2)' archivo='logodescartes.png' ">
+      <param name="G_04" value="espacio='title' tipo='imagen' coord_abs='no' expresión='(9.6,0,1.2,1.2)' archivo='pollinations.png' ">
+      <param name="G_05" value="espacio='E1' tipo='imagen' dibujar-si='muestra=0' coord_abs='no' expresión='(0,-0.9,1,1)' archivo='fondo.webp' opacidad='0.7' ">
+      <param name="G_06" value="espacio='E1' tipo='texto' color='000000' coord_abs='sí' expresión='(500,710)' texto='Herramienta diseñada por Juan Guillermo Rivera Berrío' ancho='1000' fuente puntos='14' align='a_center' anchor='a_center_center' ">
+      <param name="G_07" value="espacio='E1' tipo='texto' color='a77fe2' coord_abs='sí' expresión='(45,69)' texto='Modelo' ancho='1' color_borde_texto='000000' negrita='sí' fuente puntos='30' align='a_left' anchor='a_top_left' shadowColor='000000' shadowOffsetX='3' shadowOffsetY='2' ">
+      <param name="G_08" value="espacio='E1' tipo='texto' color='20303a' dibujar-si='pp' coord_abs='sí' expresión='(420,74)' texto='[color_fondo]' decimales='0' ancho='1' align='a_left' anchor='a_top_left' ">
+      <param name="G_09" value="espacio='E1' tipo='texto' color='20303a' dibujar-si='pp' coord_abs='sí' expresión='(720,74)' texto='[color_def]' decimales='0' ancho='1' align='a_left' anchor='a_top_left' ">
+      <param name="G_10" value="espacio='E1' tipo='texto' color='4d1fbe' dibujar-si='muestra=1' coord_abs='sí' expresión='(560,105)' texto='Color de fondo para el cuestionario' ancho='1' negrita='sí' fuente puntos='22' align='a_left' anchor='a_top_left' ">
+      <param name="Animación" value="pausa='40' controles='sí' auto='no' repetir='no' inicio='k=1' hacer='k=k+1' mientras='1' ">
+    </ajs>
+  </div>
+  <script>
+    // 1) Al cargar: intenta restaurar la API key guardada
+    (function restoreKeyOnLoad() {
+      try {
+        const raw = localStorage.getItem("pollinations_api_key_raw");
+        if (raw) window.vAPI = raw;
+      } catch (e) {}
+    })();
+
+    // 2) Recibir mensajes desde index.html
+    window.addEventListener("message", (event) => {
+      // Seguridad básica: solo aceptar mismo origen
+      if (event.origin !== window.location.origin) return;
+
+      const msg = event.data || {};
+      if (msg.type === "set" && msg.name === "vAPI") {
+        const rawKey = (msg.value || "").trim();
+        if (!rawKey) return;
+
+        // Guardar y exponer como variable global
+        window.vAPI = rawKey;
+
+        try {
+          localStorage.setItem("pollinations_api_key_raw", rawKey);
+        } catch (e) {}
+
+        // Si tu escena necesita "refrescar" algo, aquí es donde lo harías.
+        // (por defecto no hacemos reload para no molestar)
+      }
+
+      if (msg.type === "update") {
+        // Por si quieres forzar alguna acción al recibir "update"
+        // Ejemplo: console.log("update recibido");
+      }
+    });
+  </script>
+
+<script id="instrucciones0.txt" type="descartes/archivo">
+  Eres un chatbot cuya personalidad debe seguir las siguientes instrucciones:
+  - TONO: Académico.
+  - ESTILO: Profesional. Siempre responder con 12 preguntas tipo falso verdadero, sin ninguna introducción o comentario adicional.
+  - USO DE LENGUAJE: Palabras precisas y claras. Usar lenguaje técnico cuando sea necesario.
+  - EMOJIS: Ninguno.
+  REGLAS ESPECIALES:
+  - Siempre responder profesionalmente.
+  - Luego de recibir el mensaje, debes generar 12 preguntas tipo falso o verdadero relacionadas con el mensaje. Las preguntas las debes entregar con este formato:
+	{
+	question: "",
+	answer: true,
+	justification: ""
+	},
+  - Cada pregunta debe ir separada por una coma y salto de línea
+  - Tu respuesta no debe presentar ningún comentario adicional y tampoco debe iniciar con alguna introducción, solo debes mostrar las 12 preguntas relacionadas con el mensaje enviado por el usuario
+  </script>
+
+<script id="inicio_archivo.txt" type="descartes/archivo">
+  <html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards de Falso y Verdadero</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: linear-gradient(to bottom, #330033,#663366, #996699); /* Gradiente oscuro y rico */
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto; /* Permite scroll si el contenido es largo */
+        }
+        .container {
+            width: 95%;
+            max-width: 900px; /* Ancho máximo para el grid */
+            margin: auto;
+            text-align: center; /* Para centrar el mensaje final */
+        }
+        .flashcards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Ajusta el tamaño y número de columnas */
+            gap: 20px; /* Espacio entre tarjetas */
+            justify-content: center;
+            margin-bottom: 40px; /* Espacio antes del mensaje final */
+        }
+        /* Contenedor para la animación 3D */
+        .flashcard-container {
+            perspective: 1000px;
+            height: 320px; /* Altura fija para todas las tarjetas */
+            opacity: 0.5; /* Tarjetas inactivas menos visibles */
+            pointer-events: none; /* Deshabilita clics en tarjetas inactivas */
+            transition: opacity 0.5s ease-in-out;
+            cursor: default; /* Cursor por defecto en inactivo */
+        }
+        .flashcard-container.active {
+            opacity: 1; /* Tarjeta activa completamente visible */
+            pointer-events: auto; /* Habilita clics en la tarjeta activa */
+            cursor: pointer; /* Indica que es clickable cuando está activa */
+        }
+         /* Deshabilitar cursor click en el contenedor una vez respondida */
+         .flashcard-container.answered {
+             cursor: default !important;
+         }
+        /* El elemento que rota */
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.25);
+            background-color: rgba(255, 255, 255, 0.98); /* Fondo del anverso */
+            color: #333; /* Texto */
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex; /* Para centrar contenido */
+            flex-direction: column;
+            justify-content: space-between; /* Distribuye el espacio */
+            align-items: center;
+        }
+         /* Estado volteado */
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+         /* Contenido del reverso (será similar al anverso, pero con respuesta) */
+        .flashcard-back-content {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            transform: rotateY(180deg); /* Inicialmente girado */
+            background-color: rgba(255, 255, 255, 0.98); /* Mismo fondo que el anverso */
+            color: #333;
+            padding: 20px;
+            box-sizing: border-box;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centra el contenido verticalmente */
+            align-items: center;
+            text-align: center;
+            overflow-y: auto; /* Permite scroll si la justificación es larga */
+        }
+        .flashcard h2 {
+            margin-top: 10px; /* Pequeño margen arriba */
+            margin-bottom: auto; /* Empuja los botones hacia abajo */
+            font-weight: 600;
+            color: #5d3a7f;
+            font-size: 1.2em;
+            flex-grow: 1; /* Permite que ocupe el espacio disponible */
+            display: flex;
+            align-items: center; /* Centra verticalmente */
+            justify-content: center; /* Centra horizontalmente */
+        }
+        .flashcard .button-container {
+            margin-top: auto; /* Empuja los botones hacia abajo */
+             width: 100%;
+             display: flex;
+             justify-content: center;
+             gap: 15px;
+        }
+        .flashcard button {
+            background-color: #6a1b9a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-family: 'Cormorant Garamond', serif;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            min-width: 90px;
+        }
+        .flashcard button:hover {
+            background-color: #4a148c;
+        }
+         .flashcard button:active {
+            transform: scale(0.98);
+        }
+        .flashcard button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+            opacity: 0.7;
+        }
+         /* Estilos para el reverso (Correcto/Incorrecto + Justificación) */
+         .flashcard-back-content .result-text {
+             font-size: 1.5em;
+             font-weight: bold;
+             margin-bottom: 15px;
+         }
+         .flashcard-back-content .justification-text {
+             font-size: 1em;
+             line-height: 1.5;
+             color: #555;
+         }
+        .flashcard-back-content .correct {
+            color: green;
+        }
+        .flashcard-back-content .incorrect {
+            color: red;
+        }
+        /* Mensaje final de resultados */
+        .results-message {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #ffeb3b; /* Amarillo brillante */
+            margin-top: 40px;
+            opacity: 0; /* Oculto al inicio */
+            transition: opacity 1s ease-in-out;
+        }
+        .results-message.show {
+             opacity: 1;
+        }
+        /* Media queries para responsividad */
+        @media (max-width: 768px) {
+            .flashcards-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 15px;
+            }
+             .flashcard-container {
+                height: 280px;
+            }
+             .flashcard h2 {
+                 font-size: 1.1em;
+             }
+             .flashcard button {
+                 padding: 8px 15px;
+                 font-size: 0.85em;
+             }
+             .results-message {
+                 font-size: 1.5em;
+             }
+        }
+         @media (max-width: 480px) {
+            .flashcards-grid {
+                grid-template-columns: 1fr; /* Una columna en pantallas muy pequeñas */
+                gap: 15px;
+            }
+             .flashcard-container {
+                height: 250px;
+            }
+         }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="flashcards-grid" class="flashcards-grid">
+            <!-- Las tarjetas se generarán aquí por JavaScript -->
+        </div>
+         <div id="results-message" class="results-message">
+             <!-- Mensaje de resultados se mostrará aquí -->
+         </div>
+    </div>
+    <script>
+        const questions = [
+            {question: "¿La Semana Santa siempre comienza el Domingo de Ramos?",answer: true,justification: ""},{question: "¿El Jueves Santo se conmemora la crucifixión de Jesús?",answer: false,justification: "El Jueves Santo se conmemora la Última Cena y el lavatorio de pies. La crucifixión se conmemora el Viernes Santo."},
+        ];
+        let currentCardIndex = 0;
+        let correctAnswers = 0;
+        const flashcardsGrid = document.getElementById('flashcards-grid');
+        const resultsMessage = document.getElementById('results-message');
+        // Función para crear una tarjeta HTML
+        function createCard(questionData, index) {
+            const cardContainer = document.createElement('div');
+            cardContainer.classList.add('flashcard-container');
+            cardContainer.dataset.index = index;
+            const cardDiv = document.createElement('div');
+            cardDiv.classList.add('flashcard');
+            // Contenido del ANVERSO (Pregunta y Botones)
+            const frontContent = `
+                <h2>${questionData.question}</h2>
+                <div class="button-container">
+                    <button class="btn-false">Falso</button>
+                    <button class="btn-true">Verdadero</button>
+                </div>
+            `;
+            cardDiv.innerHTML = frontContent; // Añade el contenido del anverso directamente al flashcard div
+            // Creamos el elemento para el REVERSO (Resultado y Justificación)
+            const backContentDiv = document.createElement('div');
+            backContentDiv.classList.add('flashcard-back-content');
+            // El contenido real se añadirá al responder
+            cardDiv.appendChild(backContentDiv); // Añade el reverso al flashcard div
+            cardContainer.appendChild(cardDiv); // Añade el flashcard div al container
+            // --- Event Listeners para los botones (ahora están en el ANVERSO) ---
+            const trueButton = cardDiv.querySelector('.btn-true');
+            const falseButton = cardDiv.querySelector('.btn-false');
+            trueButton.addEventListener('click', (event) => {
+                event.stopPropagation(); // Evita que el click en el botón voltee prematuramente
+                // Solo verifica la respuesta si esta es la tarjeta activa y no ha sido respondida
+                if (cardContainer.classList.contains('active') && !cardContainer.dataset.answered) {
+                     checkAnswer(index, true, cardDiv, cardContainer);
+                }
+            });
+            falseButton.addEventListener('click', (event) => {
+                event.stopPropagation(); // Evita que el click en el botón voltee prematuramente
+                 // Solo verifica la respuesta si esta es la tarjeta activa y no ha sido respondida
+                if (cardContainer.classList.contains('active') && !cardContainer.dataset.answered) {
+                     checkAnswer(index, false, cardDiv, cardContainer);
+                }
+            });
+            return cardContainer;
+        }
+        // Función para verificar la respuesta
+        function checkAnswer(cardIndex, userAnswer, cardDiv, cardContainer) {
+            const questionData = questions[cardIndex];
+            const isCorrect = (userAnswer === questionData.answer);
+            // Marcar la tarjeta como respondida para evitar clics múltiples
+            cardContainer.dataset.answered = 'true';
+            cardContainer.classList.add('answered'); // Añade una clase para cambiar el cursor si quieres
+            // Deshabilitar botones
+            const trueButton = cardDiv.querySelector('.btn-true');
+            const falseButton = cardDiv.querySelector('.btn-false');
+            if (trueButton && falseButton) {
+                 trueButton.disabled = true;
+                 falseButton.disabled = true;
+            }
+            // Preparar el contenido del reverso
+            const backContentDiv = cardDiv.querySelector('.flashcard-back-content');
+            let resultHTML = '';
+            if (isCorrect) {
+                correctAnswers++;
+                resultHTML = '<p class="result-text correct">¡Correcto!</p>';
+            } else {
+                resultHTML = `<p class="result-text incorrect">¡Incorrecto!</p><p class="justification-text">${questionData.justification}</p>`;
+            }
+            backContentDiv.innerHTML = resultHTML;
+            // Voltear la tarjeta para mostrar el reverso
+            cardDiv.classList.add('flipped');
+            // Mover a la siguiente tarjeta después de un breve retraso para ver la respuesta
+            setTimeout(() => {
+                // Desactivar la tarjeta actual
+                cardContainer.classList.remove('active');
+                currentCardIndex++;
+                // Mostrar la siguiente tarjeta o los resultados finales
+                if (currentCardIndex < questions.length) {
+                    displayCard(currentCardIndex);
+                } else {
+                    showResults();
+                }
+            }, 2500); // Espera 2.5 segundos antes de pasar a la siguiente/mostrar resultados
+        }
+        // Función para activar una tarjeta específica
+        function displayCard(index) {
+            const allCards = document.querySelectorAll('.flashcard-container');
+             // Asegurarse de que todas las tarjetas estén en el anverso y no activas al inicio
+            allCards.forEach(card => {
+                card.classList.remove('active');
+                 // Solo volteamos de vuelta si no está respondida.
+                 // Si ya está respondida, queremos que se quede mostrando el resultado.
+                if (!card.dataset.answered) {
+                    card.querySelector('.flashcard').classList.remove('flipped');
+                }
+            });
+            if (index < questions.length) {
+                const nextCard = document.querySelector(`.flashcard-container[data-index='${index}']`);
+                if (nextCard) {
+                    nextCard.classList.add('active');
+                    // Asegurarse de que los botones estén habilitados para la tarjeta activa (si aún no ha sido respondida)
+                     if (!nextCard.dataset.answered) {
+                         const trueBtn = nextCard.querySelector('.btn-true');
+                         const falseBtn = nextCard.querySelector('.btn-false');
+                         if (trueBtn && falseBtn) {
+                             trueBtn.disabled = false;
+                             falseBtn.disabled = false;
+                         }
+                          // Limpiar el contenido del reverso para la nueva tarjeta activa
+                          const backContentDiv = nextCard.querySelector('.flashcard-back-content');
+                          if(backContentDiv) backContentDiv.innerHTML = '';
+                     }
+                }
+            }
+            // La lógica para mostrar resultados ahora está en checkAnswer
+        }
+        // Función para mostrar los resultados finales
+        function showResults() {
+             // Asegurarse de que todas las tarjetas respondidas queden mostrando el reverso
+            const allCards = document.querySelectorAll('.flashcard-container');
+             allCards.forEach(card => {
+                card.classList.remove('active'); // Desactiva todas las tarjetas
+                 if (card.dataset.answered) {
+                     card.querySelector('.flashcard').classList.add('flipped'); // Asegura que muestren el resultado
+                 }
+             });
+            // Esperar un momento para que se vean los resultados en las tarjetas antes de mostrar el mensaje final
+            setTimeout(() => {
+                // flashcardsGrid.style.display = 'none'; // Oculta el grid si prefieres
+                resultsMessage.innerHTML = `¡Has completado todas las tarjetas!<br>Tu puntuación final: ${correctAnswers} de ${questions.length} correctas.<br>¡Feliz Semana!`;
+                resultsMessage.classList.add('show'); // Muestra el mensaje con animación
+            }, 1000); // Espera 1 segundo después de voltear las últimas tarjetas
+        }
+        // --- Inicialización ---
+        // Crear todas las tarjetas al cargar
+        questions.forEach((q, index) => {
+            const card = createCard(q, index);
+            flashcardsGrid.appendChild(card);
+        });
+        // Activar la primera tarjeta
+        displayCard(currentCardIndex);
+	</script_cerrar>
+	</body>
+	</html>
+	</script>
+
+</body>
+</html>

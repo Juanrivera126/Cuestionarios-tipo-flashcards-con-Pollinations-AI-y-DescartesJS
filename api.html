@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pollinations API Key</title>
+
+  <style>
+    body{
+      font-family:'Segoe UI',sans-serif;
+      /* Mantenemos tu estilo de fondo transparente y sin scroll */
+      background-color: rgba(168,125,50,0.9);
+      overflow: hidden;
+
+      padding:20px;
+      text-align:center;
+      margin:0;
+      min-height:100vh;
+      box-sizing:border-box;
+      transition: background 0.3s;
+    }
+
+    h1{ margin:10px 0 10px; }
+
+    #mainContainer {
+      transition: opacity 0.3s ease;
+    }
+
+    form.api-key-container{
+      display:flex;
+      flex-direction:row;
+      justify-content:center;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+
+    input[type="password"]{
+      padding:10px;
+      width:min(560px,92vw);
+      max-width:560px;
+      border:2px solid #ccc;
+      border-radius:10px;
+      font-size:16px;
+      box-shadow:2px 2px 5px #bbb;
+      box-sizing:border-box;
+    }
+
+    button{
+      padding:10px 14px;
+      border:none;
+      border-radius:10px;
+      font-size:16px;
+      cursor:pointer;
+      box-shadow:2px 2px 5px #bbb;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    button:active { transform: translateY(2px); box-shadow: none; }
+
+    .btn-black { background:#111; color:white; }
+    .btn-validate { background: #007bff; color: white; font-weight: bold; }
+    .btn-validate:hover { background: #0056b3; }
+
+    /* Botón flotante */
+    #btnShowUI {
+      display: none;
+      position: fixed;
+      top: 20px; left: 50%;
+      transform: translateX(-50%);
+      background: #111; color: white;
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      align-items: center; justify-content: center;
+      font-size: 24px; z-index: 999;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+
+    #statusMsg {
+      font-size: 12px; color: #007bff;
+      margin-top: 5px; min-height: 18px;
+      font-weight: 600; text-shadow: 0px 0px 2px #fff;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+
+<body>
+
+  <button id="btnShowUI" onclick="restaurarUI()" title="Mostrar Configuración">🔑</button>
+
+  <div id="mainContainer">
+    <h1>Pollinations API Key</h1>
+
+    <form class="api-key-container" onsubmit="event.preventDefault(); validarYcerrar();">
+      <input id="apiKeyInput" type="password" name="api_key"
+             placeholder="Pega tu API Key aquí"
+             autocomplete="off" spellcheck="false" />
+
+      <button id="btnAuth" type="button" class="btn-black" onclick="startAuthFlow()">Obtener API Key</button>
+      <button id="btnValidate" type="submit" class="btn-validate">Validar</button>
+    </form>
+
+    <div id="statusMsg">Esperando acción...</div>
+  </div>
+
+  <script>
+    // =========================
+    // CONFIG & UTILS
+    // =========================
+    const SALT = "PLLN_SALT_";
+
+    function encrypt(raw) {
+      try { return SALT + btoa(raw); } catch { return ""; }
+    }
+    function decrypt(maybeEncrypted) {
+      try {
+        if (!maybeEncrypted || !maybeEncrypted.startsWith(SALT)) return "";
+        return atob(maybeEncrypted.slice(SALT.length));
+      } catch { return ""; }
+    }
+    function mostrarEstado(msg) {
+      const el = document.getElementById("statusMsg");
+      if(el) el.innerText = msg;
+    }
+
+    // =========================
+    // 1. COMUNICACIÓN (Broadcast)
+    // =========================
+    function broadcastKey(rawKey) {
+      if (!rawKey) return;
+      const mensaje = { type: "set", name: "vAPI", value: rawKey };
+
+      try {
+        // Enviar al padre inmediato
+        window.parent.postMessage(mensaje, "*");
+        // Enviar al top (útil si hay iframes anidados o entornos complejos)
+        if (window.top !== window.parent) {
+          window.top.postMessage(mensaje, "*");
+        }
+        mostrarEstado("✅ Key enviada al sistema.");
+      } catch (e) {
+        mostrarEstado("❌ Error envío: " + e.message);
+      }
+    }
+
+    // =========================
+    // 2. FLUJO OAUTH (MODIFICADO)
+    // =========================
+    function startAuthFlow() {
+      // Intentamos obtener la URL del PADRE para que el redirect sea limpio.
+      // Si falla (por CORS/seguridad), usamos la del iframe.
+      let redirectUrl = window.location.href.split('#')[0];
+
+      try {
+        if (window.parent && window.parent.location.href) {
+            redirectUrl = window.parent.location.href.split('#')[0];
+        }
+      } catch (e) {
+        console.log("Aviso: No se pudo leer URL del padre (CORS), usando local.");
+      }
+
+      const authUrl = "https://enter.pollinations.ai/authorize?redirect_url=" + encodeURIComponent(redirectUrl);
+      window.open(authUrl, "_blank", "noopener,noreferrer");
+    }
+
+    // =========================
+    // 3. LOGICA UI
+    // =========================
+    function validarYcerrar() {
+      const input = document.getElementById("apiKeyInput");
+      const val = input.value.trim();
+      if (!val) { alert("Ingrese una API Key."); return; }
+
+      localStorage.setItem("pollinations_api_key", encrypt(val));
+      broadcastKey(val);
+
+      setTimeout(() => {
+        document.getElementById("mainContainer").classList.add("hidden");
+        document.getElementById("btnShowUI").style.display = "flex";
+      }, 500);
+    }
+
+    function restaurarUI() {
+      document.getElementById("mainContainer").classList.remove("hidden");
+      document.getElementById("btnShowUI").style.display = "none";
+    }
+
+    // =========================
+    // 4. INICIALIZACIÓN Y DETECCIÓN
+    // =========================
+    document.addEventListener("DOMContentLoaded", () => {
+
+      // A) DETECTAR RETORNO DE OAUTH (Key en la URL)
+      // Buscamos tanto en la ventana actual como en la ventana TOP (por si el popup cargó al padre)
+      let apiKeyFromHash = null;
+
+      // Intento 1: Hash local
+      try {
+        const params = new URLSearchParams(window.location.hash.slice(1));
+        if(params.get("api_key")) apiKeyFromHash = params.get("api_key");
+      } catch(e){}
+
+      // Intento 2: Hash del Top (si estamos embebidos en el popup del padre)
+      if (!apiKeyFromHash) {
+        try {
+            const paramsTop = new URLSearchParams(window.top.location.hash.slice(1));
+            if(paramsTop.get("api_key")) apiKeyFromHash = paramsTop.get("api_key");
+        } catch(e){}
+      }
+
+      if (apiKeyFromHash) {
+        // Estamos en el popup (o recarga con hash).
+        if (window.opener) {
+          // Enviar al opener (la ventana original)
+          window.opener.postMessage({ type: "api_key", value: apiKeyFromHash }, "*");
+
+          // Intentar cerrar el popup.
+          // Si cargó el padre, cerramos window.top. Si es iframe solo, window.close.
+          try { window.top.close(); } catch(e) { window.close(); }
+        } else {
+          // Fallback: Si no hay opener, nos quedamos aquí y procesamos la key
+          document.getElementById("apiKeyInput").value = apiKeyFromHash;
+          localStorage.setItem("pollinations_api_key", encrypt(apiKeyFromHash));
+          broadcastKey(apiKeyFromHash);
+        }
+        // Limpiar URL visualmente
+        try { history.replaceState(null, "", window.location.pathname + window.location.search); } catch(e){}
+        return;
+      }
+
+      // B) RESTAURAR DESDE STORAGE
+      const savedEncrypted = localStorage.getItem("pollinations_api_key");
+      if (savedEncrypted) {
+        const raw = decrypt(savedEncrypted);
+        if (raw) {
+          document.getElementById("apiKeyInput").value = raw;
+          broadcastKey(raw);
+        }
+      }
+    });
+
+    // 5. ESCUCHAR MENSAJES (Popup -> Opener)
+    window.addEventListener("message", (event) => {
+      const msg = event.data || {};
+      if (msg.type === "api_key" && msg.value) {
+        document.getElementById("apiKeyInput").value = msg.value;
+        localStorage.setItem("pollinations_api_key", encrypt(msg.value));
+        broadcastKey(msg.value);
+        mostrarEstado("✅ Key recibida.");
+
+        // Auto-cerrar visualmente si se prefiere (opcional)
+        // setTimeout(validarYcerrar, 500);
+      }
+    });
+  </script>
+</body>
+</html>
