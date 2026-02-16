@@ -1,0 +1,367 @@
+﻿
+  <html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards de Falso y Verdadero</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: linear-gradient(to bottom, #1a237e, #3949ab, #5c6bc0); /* Gradiente oscuro y rico */
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto; /* Permite scroll si el contenido es largo */
+        }
+        .container {
+            width: 95%;
+            max-width: 900px; /* Ancho máximo para el grid */
+            margin: auto;
+            text-align: center; /* Para centrar el mensaje final */
+        }
+        .flashcards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Ajusta el tamaño y número de columnas */
+            gap: 20px; /* Espacio entre tarjetas */
+            justify-content: center;
+            margin-bottom: 40px; /* Espacio antes del mensaje final */
+        }
+        /* Contenedor para la animación 3D */
+        .flashcard-container {
+            perspective: 1000px;
+            height: 320px; /* Altura fija para todas las tarjetas */
+            opacity: 0.5; /* Tarjetas inactivas menos visibles */
+            pointer-events: none; /* Deshabilita clics en tarjetas inactivas */
+            transition: opacity 0.5s ease-in-out;
+            cursor: default; /* Cursor por defecto en inactivo */
+        }
+        .flashcard-container.active {
+            opacity: 1; /* Tarjeta activa completamente visible */
+            pointer-events: auto; /* Habilita clics en la tarjeta activa */
+            cursor: pointer; /* Indica que es clickable cuando está activa */
+        }
+         /* Deshabilitar cursor click en el contenedor una vez respondida */
+         .flashcard-container.answered {
+             cursor: default !important;
+         }
+        /* El elemento que rota */
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.25);
+            background-color: rgba(255, 255, 255, 0.98); /* Fondo del anverso */
+            color: #333; /* Texto */
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex; /* Para centrar contenido */
+            flex-direction: column;
+            justify-content: space-between; /* Distribuye el espacio */
+            align-items: center;
+        }
+         /* Estado volteado */
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+         /* Contenido del reverso (será similar al anverso, pero con respuesta) */
+        .flashcard-back-content {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            transform: rotateY(180deg); /* Inicialmente girado */
+            background-color: rgba(255, 255, 255, 0.98); /* Mismo fondo que el anverso */
+            color: #333;
+            padding: 20px;
+            box-sizing: border-box;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centra el contenido verticalmente */
+            align-items: center;
+            text-align: center;
+            overflow-y: auto; /* Permite scroll si la justificación es larga */
+        }
+        .flashcard h2 {
+            margin-top: 10px; /* Pequeño margen arriba */
+            margin-bottom: auto; /* Empuja los botones hacia abajo */
+            font-weight: 600;
+            color: #5d3a7f;
+            font-size: 1.2em;
+            flex-grow: 1; /* Permite que ocupe el espacio disponible */
+            display: flex;
+            align-items: center; /* Centra verticalmente */
+            justify-content: center; /* Centra horizontalmente */
+        }
+        .flashcard .button-container {
+            margin-top: auto; /* Empuja los botones hacia abajo */
+             width: 100%;
+             display: flex;
+             justify-content: center;
+             gap: 15px;
+        }
+        .flashcard button {
+            background-color: #6a1b9a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-family: 'Cormorant Garamond', serif;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            min-width: 90px;
+        }
+        .flashcard button:hover {
+            background-color: #4a148c;
+        }
+         .flashcard button:active {
+            transform: scale(0.98);
+        }
+        .flashcard button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+            opacity: 0.7;
+        }
+         /* Estilos para el reverso (Correcto/Incorrecto + Justificación) */
+         .flashcard-back-content .result-text {
+             font-size: 1.5em;
+             font-weight: bold;
+             margin-bottom: 15px;
+         }
+         .flashcard-back-content .justification-text {
+             font-size: 1em;
+             line-height: 1.5;
+             color: #555;
+         }
+        .flashcard-back-content .correct {
+            color: green;
+        }
+        .flashcard-back-content .incorrect {
+            color: red;
+        }
+        /* Mensaje final de resultados */
+        .results-message {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #ffeb3b; /* Amarillo brillante */
+            margin-top: 40px;
+            opacity: 0; /* Oculto al inicio */
+            transition: opacity 1s ease-in-out;
+        }
+        .results-message.show {
+             opacity: 1;
+        }
+        /* Media queries para responsividad */
+        @media (max-width: 768px) {
+            .flashcards-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 15px;
+            }
+             .flashcard-container {
+                height: 280px;
+            }
+             .flashcard h2 {
+                 font-size: 1.1em;
+             }
+             .flashcard button {
+                 padding: 8px 15px;
+                 font-size: 0.85em;
+             }
+             .results-message {
+                 font-size: 1.5em;
+             }
+        }
+         @media (max-width: 480px) {
+            .flashcards-grid {
+                grid-template-columns: 1fr; /* Una columna en pantallas muy pequeñas */
+                gap: 15px;
+            }
+             .flashcard-container {
+                height: 250px;
+            }
+         }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="flashcards-grid" class="flashcards-grid">
+            <!-- Las tarjetas se generarán aquí por JavaScript -->
+        </div>
+         <div id="results-message" class="results-message">
+             <!-- Mensaje de resultados se mostrará aquí -->
+         </div>
+    </div>
+    <script>
+        const questions = [
+            {question: "Las IA generativas de imagen utilizan redes neuronales para crear imágenes nuevas.", answer: true, justification: "Las IA generativas emplean redes neuronales profundas como GANs o modelos difusivos para generar imágenes."},  
+{question: "Las redes generativas antagónicas (GANs) son un tipo común de modelos para generar imágenes.", answer: true, justification: "Las GANs consisten en un generador y un discriminador que compiten para mejorar la calidad de las imágenes generadas."},  
+{question: "Los modelos difusivos no pueden utilizarse para crear imágenes a partir de texto.", answer: false, justification: "Los modelos difusivos pueden convertir descripciones textuales en imágenes mediante procesos de denoising."},  
+{question: "El proceso de entrenamiento de una IA generativa de imagen implica ajustar parámetros para minimizar una función de pérdida.", answer: true, justification: "El entrenamiento optimiza los parámetros para que las imágenes generadas se acerquen a las reales."},  
+{question: "Las IA generativas de imagen solo pueden crear imágenes realistas de personas y no objetos inanimados.", answer: false, justification: "Estas IA pueden generar amplia variedad de imágenes, incluyendo personas, objetos y paisajes."},  
+{question: "El aprendizaje no supervisado es común en el entrenamiento de IA generativas de imagen.", answer: true, justification: "Las IA generativas generalmente utilizan aprendizaje no supervisado para modelar distribuciones de datos."},  
+{question: "Los modelos de difusión son menos estables que las GANs en la generación de imágenes.", answer: false, justification: "Los modelos de difusión tienden a ser más estables y producen resultados de alta calidad comparado con GANs."},  
+{question: "El ajuste fino o fine-tuning es una técnica utilizada para especializar una IA generativa en ciertos estilos de imagen.", answer: true, justification: "El fine-tuning permite adaptar modelos preentrenados a tareas específicas o estilos particulares."},  
+{question: "Las imágenes generadas por IA pueden contener artefactos o imperfecciones visibles.", answer: true, justification: "Dependiendo del modelo y entrenamiento, pueden aparecer artefactos en las imágenes producidas."},  
+{question: "Las IA generativas de imagen no tienen aplicaciones en la industria creativa ni en el diseño.", answer: false, justification: "Estas IA se emplean en diseño gráfico, arte digital, entretenimiento y otras áreas creativas."},  
+{question: "La ética y los derechos de autor son consideraciones importantes en el uso de IA generativas de imagen.", answer: true, justification: "La generación automática de imágenes plantea cuestiones legales y éticas sobre propiedad intelectual y uso responsable."},  
+{question: "La capacidad de las IA generativas para comprender el contexto textual es irrelevante para crear imágenes precisas.", answer: false, justification: "La comprensión del texto es clave para generar imágenes coherentes con las descripciones proporcionadas."}
+        ];
+        let currentCardIndex = 0;
+        let correctAnswers = 0;
+        const flashcardsGrid = document.getElementById('flashcards-grid');
+        const resultsMessage = document.getElementById('results-message');
+        // Función para crear una tarjeta HTML
+        function createCard(questionData, index) {
+            const cardContainer = document.createElement('div');
+            cardContainer.classList.add('flashcard-container');
+            cardContainer.dataset.index = index;
+            const cardDiv = document.createElement('div');
+            cardDiv.classList.add('flashcard');
+            // Contenido del ANVERSO (Pregunta y Botones)
+            const frontContent = `
+                <h2>${questionData.question}</h2>
+                <div class="button-container">
+                    <button class="btn-false">Falso</button>
+                    <button class="btn-true">Verdadero</button>
+                </div>
+            `;
+            cardDiv.innerHTML = frontContent; // Añade el contenido del anverso directamente al flashcard div
+            // Creamos el elemento para el REVERSO (Resultado y Justificación)
+            const backContentDiv = document.createElement('div');
+            backContentDiv.classList.add('flashcard-back-content');
+            // El contenido real se añadirá al responder
+            cardDiv.appendChild(backContentDiv); // Añade el reverso al flashcard div
+            cardContainer.appendChild(cardDiv); // Añade el flashcard div al container
+            // --- Event Listeners para los botones (ahora están en el ANVERSO) ---
+            const trueButton = cardDiv.querySelector('.btn-true');
+            const falseButton = cardDiv.querySelector('.btn-false');
+            trueButton.addEventListener('click', (event) => {
+                event.stopPropagation(); // Evita que el click en el botón voltee prematuramente
+                // Solo verifica la respuesta si esta es la tarjeta activa y no ha sido respondida
+                if (cardContainer.classList.contains('active') && !cardContainer.dataset.answered) {
+                     checkAnswer(index, true, cardDiv, cardContainer);
+                }
+            });
+            falseButton.addEventListener('click', (event) => {
+                event.stopPropagation(); // Evita que el click en el botón voltee prematuramente
+                 // Solo verifica la respuesta si esta es la tarjeta activa y no ha sido respondida
+                if (cardContainer.classList.contains('active') && !cardContainer.dataset.answered) {
+                     checkAnswer(index, false, cardDiv, cardContainer);
+                }
+            });
+            return cardContainer;
+        }
+        // Función para verificar la respuesta
+        function checkAnswer(cardIndex, userAnswer, cardDiv, cardContainer) {
+            const questionData = questions[cardIndex];
+            const isCorrect = (userAnswer === questionData.answer);
+            // Marcar la tarjeta como respondida para evitar clics múltiples
+            cardContainer.dataset.answered = 'true';
+            cardContainer.classList.add('answered'); // Añade una clase para cambiar el cursor si quieres
+            // Deshabilitar botones
+            const trueButton = cardDiv.querySelector('.btn-true');
+            const falseButton = cardDiv.querySelector('.btn-false');
+            if (trueButton && falseButton) {
+                 trueButton.disabled = true;
+                 falseButton.disabled = true;
+            }
+            // Preparar el contenido del reverso
+            const backContentDiv = cardDiv.querySelector('.flashcard-back-content');
+            let resultHTML = '';
+            if (isCorrect) {
+                correctAnswers++;
+                resultHTML = '<p class="result-text correct">¡Correcto!</p>';
+            } else {
+                resultHTML = `<p class="result-text incorrect">¡Incorrecto!</p><p class="justification-text">${questionData.justification}</p>`;
+            }
+            backContentDiv.innerHTML = resultHTML;
+            // Voltear la tarjeta para mostrar el reverso
+            cardDiv.classList.add('flipped');
+            // Mover a la siguiente tarjeta después de un breve retraso para ver la respuesta
+            setTimeout(() => {
+                // Desactivar la tarjeta actual
+                cardContainer.classList.remove('active');
+                currentCardIndex++;
+                // Mostrar la siguiente tarjeta o los resultados finales
+                if (currentCardIndex < questions.length) {
+                    displayCard(currentCardIndex);
+                } else {
+                    showResults();
+                }
+            }, 2500); // Espera 2.5 segundos antes de pasar a la siguiente/mostrar resultados
+        }
+        // Función para activar una tarjeta específica
+        function displayCard(index) {
+            const allCards = document.querySelectorAll('.flashcard-container');
+             // Asegurarse de que todas las tarjetas estén en el anverso y no activas al inicio
+            allCards.forEach(card => {
+                card.classList.remove('active');
+                 // Solo volteamos de vuelta si no está respondida.
+                 // Si ya está respondida, queremos que se quede mostrando el resultado.
+                if (!card.dataset.answered) {
+                    card.querySelector('.flashcard').classList.remove('flipped');
+                }
+            });
+            if (index < questions.length) {
+                const nextCard = document.querySelector(`.flashcard-container[data-index='${index}']`);
+                if (nextCard) {
+                    nextCard.classList.add('active');
+                    // Asegurarse de que los botones estén habilitados para la tarjeta activa (si aún no ha sido respondida)
+                     if (!nextCard.dataset.answered) {
+                         const trueBtn = nextCard.querySelector('.btn-true');
+                         const falseBtn = nextCard.querySelector('.btn-false');
+                         if (trueBtn && falseBtn) {
+                             trueBtn.disabled = false;
+                             falseBtn.disabled = false;
+                         }
+                          // Limpiar el contenido del reverso para la nueva tarjeta activa
+                          const backContentDiv = nextCard.querySelector('.flashcard-back-content');
+                          if(backContentDiv) backContentDiv.innerHTML = '';
+                     }
+                }
+            }
+            // La lógica para mostrar resultados ahora está en checkAnswer
+        }
+        // Función para mostrar los resultados finales
+        function showResults() {
+             // Asegurarse de que todas las tarjetas respondidas queden mostrando el reverso
+            const allCards = document.querySelectorAll('.flashcard-container');
+             allCards.forEach(card => {
+                card.classList.remove('active'); // Desactiva todas las tarjetas
+                 if (card.dataset.answered) {
+                     card.querySelector('.flashcard').classList.add('flipped'); // Asegura que muestren el resultado
+                 }
+             });
+            // Esperar un momento para que se vean los resultados en las tarjetas antes de mostrar el mensaje final
+            setTimeout(() => {
+                // flashcardsGrid.style.display = 'none'; // Oculta el grid si prefieres
+                resultsMessage.innerHTML = `¡Has completado todas las tarjetas!<br>Tu puntuación final: ${correctAnswers} de ${questions.length} correctas.<br>¡Feliz Semana!`;
+                resultsMessage.classList.add('show'); // Muestra el mensaje con animación
+            }, 1000); // Espera 1 segundo después de voltear las últimas tarjetas
+        }
+        // --- Inicialización ---
+        // Crear todas las tarjetas al cargar
+        questions.forEach((q, index) => {
+            const card = createCard(q, index);
+            flashcardsGrid.appendChild(card);
+        });
+        // Activar la primera tarjeta
+        displayCard(currentCardIndex);
+	</script>
+	</body>
+	</html>
+	
